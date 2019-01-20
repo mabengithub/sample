@@ -71,6 +71,21 @@ $navbar-color: #3c3e42;
     }
  }
 
+  #logout {
+
+    cursor: default;
+
+    &:hover {
+
+      background-color: transparent;
+
+    }
+
+  }
+
+
+
+  
   /* fooer */
   
   footer {
