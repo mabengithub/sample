@@ -28,4 +28,15 @@ class User extends Authenticatable
     ];
 
     protected $table = 'users';
+
+    //Gravatar用来提供个人头像支持 ,"全球通用头像"
+    public function gravatar($size = '100')
+    {
+	$hash = md5(strtolower(trim($this->attributes['email'])));
+
+	return "http://www.gravatar.com/avatar/$hash?s=$size";
+    
+    }
+
+
 }
