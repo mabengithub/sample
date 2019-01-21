@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Notifications\ResetPassword;
 
 class User extends Authenticatable
 {
@@ -38,5 +39,25 @@ class User extends Authenticatable
     
     }
 
+    //creating用于监听模型被创建之前的事件
+    public static function boot()
+    {
+	 
+	parent::boot();
 
+	static::creating(function ($user) {
+
+	    $user->activation_token = str_random(30);
+
+	});
+
+    }
+
+    //重设密码
+    public function sendPasswordResetNotification($token)
+    {
+
+	$this->notify(new ResetPassword($token));
+    
+    }
 }
