@@ -12,7 +12,11 @@ use Faker\Generator as Faker;
 | model instances for testing / seeding your application's database.
 |
 */
+/*
+ define第一个参数为指定的Eloquent模型类，第二个参数为一个闭包函数
+ 该闭包函数接收一个Faker PHP函数库实例。
 
+*/
 $factory->define(App\Models\User::class, function (Faker $faker) {
 
     $date_time = $faker->date . ' ' . $faker->time;
@@ -20,13 +24,19 @@ $factory->define(App\Models\User::class, function (Faker $faker) {
     static $password;
 
     return [
+
         'name' => $faker->name,
+	
 	'email' => $faker->unique()->safeEmail,
-	'is_admin' => false,
-	'activated' => true,
+
 	'password' => $password ?: $password = bcrypt('secret'), // secret
+
 	'remember_token' => str_random(10),
+
 	'created_at' => $date_time,
+
 	'updated_at' => $date_time,
+	
+	'is_admin' => false
     ];
 });

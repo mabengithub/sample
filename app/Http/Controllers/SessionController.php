@@ -7,6 +7,16 @@ use Auth;
 
 class SessionController extends Controller
 {
+
+    public function __construct()
+    {
+    	$this->middleware('guest', [
+	
+	   'only' => ['create']
+
+	]);	
+    }
+
     //显示登录页面
     public function create()
     {
@@ -35,7 +45,8 @@ class SessionController extends Controller
 
 	        session()->flash('success', '欢迎回来!');
 
-		return redirect()->route('users.show', [Auth::user()]);
+		//return redirect()->route('users.show', [Auth::user()]);
+		return redirect()->intended(route('users.show', [Auth::user()]));
 
 	    } else {
 

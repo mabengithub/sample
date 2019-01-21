@@ -12,21 +12,100 @@ class UsersController extends Controller
 {
 
     //未登录访问权限
-    public function __construct()
-    {
+    public function __construct()    {
 	
 	$this->middleware('auth', [
 
-	    'except' => ['show', 'create', 'store', 'index', 'confirmEmail']
+	    'except' => ['index','show', 'create', 'store']
+        ]);
+
+	//只允许未登录的用户访问
+	$this->middleware('guest', [
+		
+	    'only' => ['create']
 	]);
+
+
     }
-    
+
+    //用户列表
+    public function index()
+    {
+	//$users = User::all();
+	$users = User::paginate(10);
+
+	return view('users.index', compact('users'));
+    }
+
     //用户注册
     public function create()
     {
        
 	return view('users.create'); 
     
+    }
+
+    //修改页面
+    public function edit(User $user)
+    {
+        //登录用户修改别人的资料异常
+	try{
+	
+	    $this->authorize('update', $user);
+
+	    return view('users.edit', compact('user'));
+
+	} catch(\Exception $exception) {
+	    
+	    //echo '无权修改其他用户资料';
+	    //return redirect()->back();//重定向
+	    return abort(403, '对不起，你无权访问此页面');
+
+	}
+    }
+
+    //执行修改
+    public function update(User $user, Request $request)
+    {
+    	$this->validate($request, [
+
+	    'name' => 'required|max:50',
+
+	    'password' => 'nullable|confirmed|min:6'
+        ]);
+
+	$this->authorize('update', $user);
+
+	$data = [];
+
+	$data['name'] = $request->name;
+
+	if ($request->password) {
+
+	    $data['password'] = bcrypt($request->password);
+	}
+
+
+	$user->update($data);
+
+	session()->flash('success', '个人资料更新成功!');
+
+	return redirect()->route('users.show', $user->id);
+
+
+    }
+     
+    //删除
+    public function destroy(User $user)
+    {
+
+	$this->authorize('destroy', $user);
+
+	$user->delete();
+
+	session()->flash('success', '成功删除用户!');
+
+	return back();
     }
 
     //用户详情

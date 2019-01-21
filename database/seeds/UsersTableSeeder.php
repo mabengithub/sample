@@ -1,25 +1,26 @@
 <?php
 
-  use Illuminate\Database\Seeder;
- 
-  use App\Models\User;
+use Illuminate\Database\Seeder;
+use App\Models\User;
 
-  class UsersTabelSeeder extends Seeder
-  {
+class UsersTableSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+	$users = factory(User::class)->times(50)->make();
+	User::insert($users->makeVisible(['password', 'remember_token'])->toArray());
 
-      public function run()
-      {
-	  $users = factory(User::class)->time(50)->make();
+	$user = User::find(1);
+	$user->name = 'admin';
+	$user->email = 'mabenchn@gmail.com';
+	$user->password = bcrypt('password');
+	$user->is_admin = true;
+	$user->save();
 
-	  User::insert($users->makeVisible(['password', 'remember_token'])->toArray();
-
-	  $user = User::find(1);
-	  $user->name = 'xiaoma';
-	  $user->email = '863252131@qq.com';
-	  $user->password = bcrypt('password');
-	  $user->is_admin = true;
-	  $user->activated = true;
-	  $user->save();
-      }
-
-   }
+    }
+}
