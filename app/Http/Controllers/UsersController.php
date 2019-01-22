@@ -16,7 +16,8 @@ class UsersController extends Controller
 	
 	$this->middleware('auth', [
 
-	    'except' => ['index','show', 'create', 'store']
+	    'except' => ['index','show', 'create', 'store', 'confirmEmail']
+
         ]);
 
 	//只允许未登录的用户访问
@@ -111,8 +112,13 @@ class UsersController extends Controller
     //用户详情
     public function show(User $user)
     {
-    
-	return view('users.show',compact('user'));
+
+	//取出一个用户的所有微博
+	$statuses = $user->statuses()
+			 ->orderBy('created_at', 'desc')
+			 ->paginate(30);
+
+	return view('users.show',compact('user', 'statuses'));
     
     }
 
@@ -180,7 +186,6 @@ class UsersController extends Controller
     {
         $user = User::where('activation_token', $token)->firstOrFail();
 
-
 	$user->activated = true;
 
 	$user->activation_token = null;
@@ -195,4 +200,14 @@ class UsersController extends Controller
 	return redirect()->route('users.show', [$user]);
 
     }
+
+    //
+    public function feed()
+    {
+    	return $this->statuses()
+		    ->orderBy('created_at', 'desc');
+    }
 }
+
+
+
