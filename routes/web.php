@@ -42,3 +42,11 @@
 
  //微博
  Route::resource('statuses', 'StatusesController', ['only' => ['store', 'destroy']]);
+
+ //关注
+ Route::get('/users/{user}/followings', 'UsersController@followings')->name('users.followings');//显示用户的关注人
+ Route::get('/users/{user}/followers', 'UsersController@followers')->name('users.followers');//显示用户的粉丝列表
+
+ //加关注，取消关注
+ Route::post('/users/followers/{user}', 'FollowersController@store')->name('followers.store');
+ Route::delete('/users/followers/{user}', 'FollowersController@destroy')->name('followers.destroy');
